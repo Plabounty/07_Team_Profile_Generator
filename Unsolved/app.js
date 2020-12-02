@@ -9,6 +9,174 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+// const newEn = new Engineer(response.id, response.email, response.name, response.github)
+const employees = [];
+
+
+function init() {
+    inquirer
+  .prompt([
+    {
+      type: 'list',
+      message: 'What is your role?',
+      name: 'role',
+      choices: ['Manager', 'Engineer', 'Intern']
+    },
+  ])
+  .then((response) => {
+    if (response.role === 'Engineer') {
+        engin()
+    }
+    if (response.role === 'Manager') {
+        manag()
+    }
+    if (response.role === 'Intern') {
+        inter()
+    }
+  });
+}
+
+function engin() {
+    inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'What is your name?',
+        name: 'name',
+      },
+
+      {
+        type: 'input',
+        message: 'What is your ID?',
+        name: 'ID',
+      },
+
+      {
+        type: 'input',
+        message: 'What is your email?',
+        name: 'email',
+      },
+      {
+        type: 'input',
+        message: 'What is your Github username?',
+        name: 'github',
+      },
+      {
+        type: 'list',
+        message: 'Create another employee?',
+        name: 'another',
+        choices: ['yes', 'no']
+      },
+    ])
+
+      .then((response) => {
+        const engineer = new Engineer(response.name, response.ID, response.email, response.github);
+        employees.push(engineer)
+          if (response.another === 'yes'){
+              init()
+          }  else if (response.another === 'no') {
+            buildTeam();
+        }
+      })
+
+    };
+
+function manag() {
+    inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'What is your name?',
+        name: 'name',
+      },
+
+      {
+        type: 'input',
+        message: 'What is your ID?',
+        name: 'ID',
+      },
+
+      {
+        type: 'input',
+        message: 'What is your email?',
+        name: 'email',
+      },
+      {
+        type: 'input',
+        message: 'What is your office number?',
+        name: 'officeNumber',
+      },
+      {
+        type: 'list',
+        message: 'Create another employee?',
+        name: 'another',
+        choices: ['yes', 'no']
+      },
+
+    ])
+    .then((response) => {
+        const manager = new Manager(response.name, response.ID, response.email, response.officeNumber);
+        employees.push(manager)
+        if (response.another === 'yes'){
+            init()
+        }  else if (response.another === 'no') {
+            buildTeam();
+        }
+    })
+}; 
+
+function inter() {
+    inquirer
+    .prompt([
+      {
+        type: 'input',
+        message: 'What is your name?',
+        name: 'name',
+      },
+
+      {
+        type: 'input',
+        message: 'What is your ID?',
+        name: 'ID',
+      },
+
+      {
+        type: 'input',
+        message: 'What is your email?',
+        name: 'email',
+      },
+      {
+        type: 'input',
+        message: 'What school are you attending?',
+        name: 'school',
+      },
+      {
+        type: 'list',
+        message: 'Create another employee?',
+        name: 'another',
+        choices: ['yes', 'no']
+      },
+
+    ])
+    .then((response) => {
+        const intern = new Intern(response.name, response.ID, response.email, response.school);
+        employees.push(intern)
+        if (response.another === 'yes'){
+            init()
+        } else if (response.another === 'no') {
+            buildTeam();
+        }
+    })
+};
+    
+function buildTeam() {
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdirSync(OUTPUT_DIR)
+    } 
+    fs.writeFileSync(outputPath, render(employees), 'utf-8')
+}
+
+init()
 
 
 // Write code to use inquirer to gather information about the development team members,
@@ -32,4 +200,4 @@ const render = require("./lib/htmlRenderer");
 // and Intern classes should all extend from a class named Employee; see the directions
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
+// for the provided `render` function to work! 
